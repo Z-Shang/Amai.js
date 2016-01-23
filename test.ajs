@@ -1,3 +1,5 @@
 macro test(x){
-      fun,x();
+      fun@x,();
 }
+
+test(a);
