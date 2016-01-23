@@ -47,20 +47,33 @@
           (format *error-output* "Macro ~A's arity doesn't match the argument: ~A" (js-macro-name m) call-arg)
           ;;SBCL Only
           (sb-ext:exit))
-        (setf tok
-              (mapcar #'(lambda (o)
-                          (if (equalp (char o 0) #\`)
-                              (cdar (member-if #'(lambda (s) (equalp (car s) o)) sym-lst))
-                              (if (member-if #'(lambda (s) (equalp (car s) o)) arg-lst)
-                                  (cdar (member-if #'(lambda (s) (equalp (car s) o)) arg-lst))
-                                  o)))))
-        tok)))
+        (mapcar #'(lambda (o)
+                    (cond
+                      ((and (find #\@ o :test #'equalp)
+                            (find #\, o :test #'equalp))
+                       (let ((apos (position #\@ o :test #'equalp))
+                             (cpos (position #\, o :test #'equalp)))
+                         (if (< cpos (1+ apos))
+                             (progn
+                               (format *error-output* "Error in ~A, must behind @ in a macro symbol!" o)
+                               (sb-ext:exit))
+                             (concatenate 'string
+                                          (subseq o 0 apos)
+                                          (cdar (member-if #'(lambda (s) (equalp (car s) (subseq o (1+ apos) cpos))) arg-lst))
+                                          (subseq o cpos)))))
+                      ((equalp (char o 0) #\`)
+                       (cdar (member-if #'(lambda (s) (equalp (car s) o)) sym-lst)))
+                      ((member-if #'(lambda (s) (equalp (car s) o)) arg-lst)
+                       (cdar (member-if #'(lambda (s) (equalp (car s) o)) arg-lst)))
+                      (t
+                       o)))
+                tok))))
 
 (defun tokenize (str states)
   (let ((out '()))
     (loop for c across str
        with tok = ""
-       else do (setf tok (concatenate 'string tok (list c)))
+       else do (setf tok (concatenate 'string tok (string c)))
        when (or (equalp c #\')
                 (equalp c #\"))
        do (if (equalp c #\')
