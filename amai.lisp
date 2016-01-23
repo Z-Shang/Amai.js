@@ -42,12 +42,19 @@
   (let* ((tok (car (tokenize (js-macro-macrobody m))))
          (arg-lst (gen-arg-lst m call-arg))
          (sym-lst (mapcar #'(lambda (s) (cons s (concatenate 'string s (symbol-name (gensym))))) (remove-duplicates (loop for o in tok when (equalp (char o 0) #\`) collect o)))))
-    (setf tok
-          (mapcar #'(lambda (o)
-                      (if (equalp (char o 0) #\`)
-                          (cdar (member-if #'(lambda (s) (equalp (car s) o)) sym-lst))
-                          o))))
-    tok))
+    (if (equalp arg-lst 'ERR-ARITY-DONT-MATCH)
+        (progn
+          (format *error-output* "Macro ~A's arity doesn't match the argument: ~A" (js-macro-name m) call-arg)
+          ;;SBCL Only
+          (sb-ext:exit))
+        (setf tok
+              (mapcar #'(lambda (o)
+                          (if (equalp (char o 0) #\`)
+                              (cdar (member-if #'(lambda (s) (equalp (car s) o)) sym-lst))
+                              (if (member-if #'(lambda (s) (equalp (car s) o)) arg-lst)
+                                  (cdar (member-if #'(lambda (s) (equalp (car s) o)) arg-lst))
+                                  o)))))
+        tok)))
 
 (defun tokenize (str states)
   (let ((out '()))
