@@ -77,7 +77,7 @@
 (defun compile-macro (m call-arg)
   (let* ((tok (car (tokenize (js-macro-macrobody m) (make-parse-state))))
          (arg-lst (gen-arg-lst m call-arg))
-         (sym-lst (mapcar #'(lambda (s) (cons s (concatenate 'string s (symbol-name (gensym))))) (remove-duplicates (loop for o in tok when (equalp (char o 0) #\`) collect o)))))
+         (sym-lst (mapcar #'(lambda (s) (cons s (concatenate 'string (subseq s 1) "$" (symbol-name (gensym))))) (remove-duplicates (loop for o in tok when (equalp (char o 0) #\`) collect o)))))
     (if (equalp arg-lst 'ERR-ARITY-DONT-MATCH)
         (progn
           (format *error-output* "Macro ~A's arity doesn't match the argument: ~A~%'" (js-macro-name m) call-arg)
