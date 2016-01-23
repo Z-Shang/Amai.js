@@ -12,7 +12,7 @@ This is called Amai.js, but it is written in Common Lisp, deal with it. ;)
 ## Features
 Hygienic and non-hygienic macro, at the same time.
 
-Normal symbols like `var foo` will be kept for the normal use, ``\`foo`` will be converted into something like: `foo$G632`.
+Normal symbols like `var foo` will be kept for the normal use, ```foo`` will be converted into something like: `foo$G632`.
 
 And you have dynamic function calls.
 
