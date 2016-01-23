@@ -1,0 +1,10 @@
+# Amai.js (甘い.js)
+
+## What is Amai.js
+Amai.js is yet another library that brings Lisp like MACRO into JavaScript.
+
+## Why Another?
+Sweet.js is good, but I'm thinking something different.
+
+## BTW
+This is called Amai.js, but it is written in Common Lisp, deal with it. ;)
