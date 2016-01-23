@@ -1,3 +1,7 @@
 ;;Package def
-(defpackage amai
+(in-package #:cl)
+
+(defpackage #:amai
   (:use :cl))
+
+(provide 'amai)
