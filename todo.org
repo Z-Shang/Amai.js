@@ -1,5 +1,0 @@
-* Tasks
-** TODO Define the JS-Macro Syntax
-** TODO AST or not
-** TODO HMACRO and / or MACRO
-** TODO Reader-Macro

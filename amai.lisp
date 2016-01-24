@@ -21,7 +21,10 @@
   (brace-count 0 :type integer)
   (bracket-count 0 :type integer)
   (pointy-count 0 :type integer)
-  (tmp-str "" :type string))
+  (tmp-macro (make-js-macro) :type js-macro)
+  (macro-state nil :type boolean)
+  )
+
 
 (defun tokenize (str states)
   (let ((out '()))
@@ -48,11 +51,11 @@
                (not (or (parse-state-single-quote states)
                         (parse-state-double-quote states))))
        do (progn
-            (setf out (append out (list tok)))
+            (setf out (append out (list (string tok))))
             (setf tok ""))
        else if (member c '(#\( #\) #\[ #\] #\{ #\} #\< #\> #\; #\,))
        do (progn
-            (setf out (append out (list tok)))
+            (setf out (append out (list (string tok))))
             (setf out (append out (list (string c))))
             (setf tok ""))
        else do (setf tok (concatenate 'string tok (string c))))
@@ -69,8 +72,8 @@
 
 (defun gen-arg-lst (m call-arg)
   (let ((orig (js-macro-arg-lst m)))
-    (if (< (length call-arg)
-           (length orig))
+    (if (not (= (length call-arg)
+                (length orig)))
         'ERR-ARITY-DONT-MATCH
         (loop for a in orig for b in call-arg collect (cons a b)))))
 
@@ -105,23 +108,4 @@
                        o)))
                 tok))))
 
-(defun parse-line (fstream ostream states &optional buffer)
-  (if (null fstream)
-      (progn
-        (close fstream)
-        (close ostream))
-      (let* ((l (read-line fstream))
-             (tokens (tokenize l states)))
-        (cond
-          ((and-list (mapcar #'(lambda (s) (member s (car tokens))) *KEYWORDS*))
-           nil
-           )
-          )
-        )
-      )
-  )
-
-(defun read-file (f &optional outname)
-  (parse-line (open f :direction :input :if-does-not-exist nil)
-              (open outname :direction :output :if-does-not-exist :create :if-exists :supersede)
-              nil))
+(provide 'amai-core)

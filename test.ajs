@@ -1,5 +1,23 @@
-macro test(x){
-      fun@x,();
+macro add* (name){
+      function add_@name^(entry) {
+               @name^.add(entry);
+      }
 }
 
-test(a);
+add*(USER);
+add*(ITEM);
+add*(ORDER);
+
+macro swap(a, b){
+    var `tmp = @a^;
+    @a^ = @b^;
+    @b^ = `tmp;
+}
+
+var a = 10;
+var b = 5;
+
+swap(a, b);
+
+console.log(a);
+console.log(b);
