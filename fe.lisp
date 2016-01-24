@@ -78,6 +78,6 @@
   (with-open-file (out path :direction :output :if-does-not-exist :create :if-exists :supersede)
     (mapcar #'(lambda (o)
                 (if (not (null o))
-                    (format out "~{~A ~}~%" o))) s)))
+                    (format out "~{~A~^ ~}~%" o))) s)))
 
 (provide 'amai-fe)

@@ -16,8 +16,9 @@ macro swap(a, b){
 
 var a = 10;
 var b = 5;
+var tmp = 20;
 
 swap(a, b);
 
-console.log(a);
-console.log(b);
+console.log("A: " + a);
+console.log("B: " + b);
